@@ -49,6 +49,20 @@ namespace ConsoleApp
             return newId;
         }
 
+        public bool Delete(User user)
+        {
+            connection.Open();
+
+            SqliteCommand command = connection.CreateCommand();
+            command.CommandText = @"DELETE FROM users WHERE username = $username";
+            command.Parameters.AddWithValue("$username", user.username);
+
+            int nChanged = command.ExecuteNonQuery();
+
+            connection.Close();
+            return !(nChanged == 0);
+        }
+
         public void AllRecords()                        //Невідомо чи буде використовуватись
         {
             connection.Open();
@@ -76,19 +90,6 @@ namespace ConsoleApp
 
         }
 
-        public bool Delete(User user)
-        {
-            connection.Open();
-
-            SqliteCommand command = connection.CreateCommand();
-            command.CommandText = @"DELETE FROM users WHERE username = $username";
-            command.Parameters.AddWithValue("$username", user.username);
-
-            int nChanged = command.ExecuteNonQuery();
-
-            connection.Close();
-            return !(nChanged == 0);
-        }
 
         private long GetCount()
         {
