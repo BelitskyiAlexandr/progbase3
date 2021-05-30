@@ -42,7 +42,6 @@ public class OrderRepository
         command.Parameters.AddWithValue("$userId", order.userId);
         command.Parameters.AddWithValue("$createdAt", order.createdAt);
         command.Parameters.AddWithValue("$amount", order.amount);
-        command.Parameters.AddWithValue("$description", order.description);
 
         long newId = (long)command.ExecuteScalar();
 
@@ -80,8 +79,7 @@ public class OrderRepository
             order.id = int.Parse(reader.GetString(0));
             order.userId = long.Parse(reader.GetString(1));
             order.createdAt = DateTime.Parse(reader.GetString(2));
-            order.description = reader.GetString(3);
-            order.amount = double.Parse(reader.GetString(4), CultureInfo.InvariantCulture); ;
+            order.amount = double.Parse(reader.GetString(3), CultureInfo.InvariantCulture); ;
             ordersList.Add(order);
         }
         Order[] orders = ordersList.ToArray();
@@ -135,8 +133,7 @@ public class OrderRepository
             order.id = long.Parse(reader.GetString(0));
             order.userId = long.Parse(reader.GetString(1));
             order.createdAt = DateTime.Parse(reader.GetString(2));
-            order.description = reader.GetString(3);
-            order.amount = double.Parse(reader.GetString(4), CultureInfo.InvariantCulture);
+            order.amount = double.Parse(reader.GetString(3), CultureInfo.InvariantCulture);
         }
         connection.Close();
 

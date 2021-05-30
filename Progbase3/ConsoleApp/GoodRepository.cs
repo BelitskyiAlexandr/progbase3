@@ -85,7 +85,7 @@ public class GoodRepository
 
         List<Good> goodsList = new List<Good>();
 
-        foreach(var goodId in goodIdList)
+        foreach (var goodId in goodIdList)
         {
             Good good = GetById(goodId);
             goodsList.Add(good);
@@ -115,5 +115,33 @@ public class GoodRepository
         connection.Close();
 
         return good;
+    }
+
+    public Good[] GetExportGoods(string substring)
+    {
+        connection.Open();
+        SqliteCommand command = connection.CreateCommand();
+        command.CommandText = @"SELECT * FROM goods WHERE name LIKE '%' || $value || '%' ";  
+        command.Parameters.AddWithValue("$value", substring);
+
+        SqliteDataReader reader = command.ExecuteReader();
+
+        List<Good> goodsList = new List<Good>();
+        while (reader.Read())
+        {
+            Good good = new Good();
+            good.id = long.Parse(reader.GetString(0));
+            good.name = reader.GetString(1);
+            good.description = reader.GetString(2);
+            good.inStock = bool.Parse(reader.GetString(3));
+            good.price = double.Parse(reader.GetString(4), CultureInfo.InvariantCulture);
+            goodsList.Add(good);
+        }
+        reader.Close();
+        connection.Close();
+
+        Good[] goods = goodsList.ToArray();
+
+        return goods;
     }
 }

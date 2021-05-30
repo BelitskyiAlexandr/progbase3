@@ -9,20 +9,15 @@ class Program
 {
     static void Main(string[] args)
     {
-        string databaseFileName = "./data/shop";
+        string databaseFileName = @"../../data/shop";
         SqliteConnection connection = new SqliteConnection($"Data Source={databaseFileName}");
         UserRepository userRepository = new UserRepository(connection);
-        Console.WriteLine("Hello World!");
+        GoodRepository goodRepository = new GoodRepository(connection);
+        OrderRepository orderRepository = new OrderRepository(connection);
+        XmlProcess export = new XmlProcess();
 
-
-        Good[] goods = new Good[]
-        {
-                new Good("laptop", 30.3, true, "good enough"),
-                new Good("dd", 44.0, true, "dd"),
-        };
-
-        Order order = new Order(0, goods);
-        Console.WriteLine(order.ToString());
+       // export.XmlExport(goodRepository.GetExportGoods("a"), "./export.xml");
+       export.XmlImport("./export.xml", goodRepository);
     }
 }
 
