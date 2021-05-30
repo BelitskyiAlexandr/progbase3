@@ -18,7 +18,7 @@ public class User
         this.createdAt = DateTime.Now;
         this.role = "user";
 
-        this.password = Hashing.HashCode(password);
+        this.password = password;
     }
     public User()
     {

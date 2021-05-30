@@ -25,6 +25,31 @@ using Microsoft.Data.Sqlite;
             return result;
         }
 
+        public User GetUserByUsername(string username)
+        {
+            connection.Open();
+
+            SqliteCommand command = connection.CreateCommand();
+            command.CommandText = @"SELECT * FROM users WHERE username = $username";
+            command.Parameters.AddWithValue("$username", username);
+
+            SqliteDataReader reader = command.ExecuteReader();
+            
+            User user = new User();
+            if(reader.Read())
+            {
+                user.id = long.Parse(reader.GetString(0));
+                user.username = reader.GetString(1);
+                user.password = reader.GetString(2);
+                user.fullname = reader.GetString(3);
+                user.createdAt = DateTime.Parse(reader.GetString(4));
+                user.role = reader.GetString(5);
+            }
+
+            connection.Close();
+            return user;
+        }
+
         public long Insert(User user)
         {
             connection.Open();
@@ -33,7 +58,7 @@ using Microsoft.Data.Sqlite;
             command.CommandText =
             @"
                 INSERT INTO users (username, password, fullname, createdAt, role) 
-                VALUES ($username, $password, $fullname, $createdAt);
+                VALUES ($username, $password, $fullname, $createdAt, $role);
             
                 SELECT last_insert_rowid();
             ";
