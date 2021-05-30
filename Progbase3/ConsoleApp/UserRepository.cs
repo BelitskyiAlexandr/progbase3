@@ -1,8 +1,6 @@
 using System;
 using Microsoft.Data.Sqlite;
 
-namespace ConsoleApp
-{
     public class UserRepository
     {
         public SqliteConnection connection;
@@ -34,14 +32,16 @@ namespace ConsoleApp
             SqliteCommand command = connection.CreateCommand();
             command.CommandText =
             @"
-                INSERT INTO users (username, fullname, createdAt) 
-                VALUES ($username, $fullname, $createdAt);
+                INSERT INTO users (username, password, fullname, createdAt, role) 
+                VALUES ($username, $password, $fullname, $createdAt);
             
                 SELECT last_insert_rowid();
             ";
             command.Parameters.AddWithValue("$username", user.username);
+            command.Parameters.AddWithValue("$password", user.password);
             command.Parameters.AddWithValue("$fullname", user.fullname);
             command.Parameters.AddWithValue("$createdAt", user.createdAt.ToString("o"));
+            command.Parameters.AddWithValue("$role", user.role);
 
             long newId = (long)command.ExecuteScalar();
 
@@ -103,4 +103,3 @@ namespace ConsoleApp
         }
 
     }
-}
