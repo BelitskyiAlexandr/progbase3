@@ -31,7 +31,7 @@ public static class Hashing
         }
         return user;
     }
-    private static string HashCode(string code)
+    public static string HashCode(string code)
     {
         SHA256 sha256Hash = SHA256.Create();
         string hash = GetHash(sha256Hash, code);

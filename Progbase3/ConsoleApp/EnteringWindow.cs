@@ -64,7 +64,7 @@ public class EnteringWindow : Window
         {
             MessageBox.ErrorQuery("LogIn error", "Wrong login", "Back");
         }
-        else if (user.username == dbUser.username && user.password == dbUser.password)
+        else if (user.username == dbUser.username && Hashing.HashCode(user.password) == dbUser.password)
         {
             user = dbUser;
             MessageBox.Query("Enter", "enter", "back");
