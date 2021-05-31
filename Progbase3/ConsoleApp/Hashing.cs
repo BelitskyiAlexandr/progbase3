@@ -8,37 +8,27 @@ public static class Hashing
     public static User SignUp(string username, string fullname, string password, UserRepository userRepository)
     {
         User user = new User();
-        if (!userRepository.UserExists(username))
-        {
-            password = HashCode(password);
-            user = new User(fullname, username, password);
-            userRepository.Insert(user);
-        }
-        else
-            Console.WriteLine("Exists");
+
+        password = HashCode(password);
+        user = new User(fullname, username, password);
+
         return user;
     }
 
     public static User SignIn(string username, string password, UserRepository userRepository)
     {
         User user = new User();
-        if (userRepository.UserExists(username))
+        if (userRepository.UserExistsByUsername(username))
         {
             SHA256 sha256Hash = SHA256.Create();
             string hash = GetHash(sha256Hash, password);
-            if (VerifyHash(sha256Hash, password, hash))
+            user.username = "u";
+            User dbUser = userRepository.GetUserByUsername(username);
+            if (VerifyHash(sha256Hash, dbUser.password, hash))
             {
                 user = userRepository.GetUserByUsername(username);
-                Console.WriteLine("The hashes are the same.");
-            }
-            else
-            {
-                Console.WriteLine("The hashes are not same.");
             }
         }
-        else
-            Console.WriteLine("User doesnt exist");
-        
         return user;
     }
     private static string HashCode(string code)
@@ -71,13 +61,11 @@ public static class Hashing
     // Verify a hash against a string.
     private static bool VerifyHash(HashAlgorithm hashAlgorithm, string input, string hash)
     {
-        // Hash the input.
-        var hashOfInput = GetHash(hashAlgorithm, input);
 
         // Create a StringComparer an compare the hashes.
         StringComparer comparer = StringComparer.OrdinalIgnoreCase;
 
-        return comparer.Compare(hashOfInput, hash) == 0;
+        return comparer.Compare(input, hash) == 0;
     }
 }
 

@@ -9,7 +9,7 @@ using Microsoft.Data.Sqlite;
             this.connection = connection;
         }
 
-        public bool UserExists(string username)
+        public bool UserExistsByUsername(string username)
         {
             connection.Open();
 
