@@ -27,6 +27,6 @@ public class Good
 
     public override string ToString()
     {
-        return $"[{this.id}] - {this.name}   price: {this.price} \r\n\tin stock: {this.inStock}";
+        return $"[{this.id}] - {this.name, -10}   price: {this.price.ToString("######.00"), -12} in stock: {this.inStock, -6}";
     }
 }

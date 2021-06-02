@@ -4,6 +4,7 @@ using Terminal.Gui;
 
 public class EnteringWindow : Window
 {
+    public User loggedUser;
     private UserRepository userRepository;
 
     protected TextField loginInput;
@@ -66,8 +67,8 @@ public class EnteringWindow : Window
         }
         else if (user.username == dbUser.username && Hashing.HashCode(user.password) == dbUser.password)
         {
-            user = dbUser;
-            MessageBox.Query("Enter", "enter", "back");
+            loggedUser = dbUser;
+            Application.RequestStop();
         }
     }
 
@@ -101,6 +102,7 @@ public class EnteringWindow : Window
 
     public void ClickQuit()
     {
-        Application.RequestStop();
+        Application.Shutdown();
+        Environment.Exit(0);
     }
 }

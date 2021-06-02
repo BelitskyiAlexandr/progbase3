@@ -144,4 +144,52 @@ public class GoodRepository
 
         return goods;
     }
+
+    public int GetTotalPages()
+    {
+        const int pageSize = 5;
+        return (int)Math.Ceiling(this.GetCount() / (double)pageSize);
+    }
+    private long GetCount() //for GetTotalPages
+    {
+        connection.Open();
+
+        SqliteCommand command = connection.CreateCommand();
+        command.CommandText = @"SELECT COUNT(*) FROM goods";
+
+        long count = (long)command.ExecuteScalar();
+        return count;
+    }
+
+    public List<Good> GetPage(int pageNumber)
+    {
+        if( pageNumber < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pageNumber));
+        }
+        connection.Open();
+
+        SqliteCommand command = connection.CreateCommand();
+        command.CommandText = @"SELECT * FROM goods LIMIT 5 OFFSET 5*($pageNumber-1)";
+        command.Parameters.AddWithValue("$pageNumber", pageNumber);
+
+        SqliteDataReader reader = command.ExecuteReader();
+        List<Good> goods = new List<Good>();
+
+        while (reader.Read())
+        {
+            Good good = new Good();
+            good.id = int.Parse(reader.GetString(0));
+            good.name = reader.GetString(1);
+            good.description = reader.GetString(2);
+            good.inStock = bool.Parse(reader.GetString(3));
+            good.price = double.Parse(reader.GetString(4), CultureInfo.InvariantCulture);
+            goods.Add(good);
+        }
+
+        reader.Close();
+        connection.Close();
+
+        return goods;
+    }
 }

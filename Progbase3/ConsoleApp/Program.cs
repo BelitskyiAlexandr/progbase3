@@ -18,16 +18,25 @@ class Program
 
         Toplevel top = Application.Top;
 
-        EnteringWindow win = new EnteringWindow();
-        win.SetRepository(userRepository);
+        bool loggedOut = true;
+        while (loggedOut)
+        {
+            EnteringWindow enteringWin = new EnteringWindow();
+            enteringWin.SetRepository(userRepository);
 
 
+            top.Add(enteringWin);
+            Application.Run();
 
-        top.Add(win);
 
+            HomeWindow homeWindow = new HomeWindow(enteringWin.loggedUser);
+            homeWindow.SetRepository(userRepository, goodRepository);
+            top.RemoveAll();
+            top.Add(homeWindow);
+            Application.Run();
+            loggedOut = homeWindow.loggedOut;
 
-        Application.Run();
-
+        }
     }
 }
 
