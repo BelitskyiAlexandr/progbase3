@@ -4,25 +4,31 @@ using Terminal.Gui;
 
 public class OrderWindow : Window
 {
-    private ListView allActivitiesView;
+    private ListView allGoodsView;
     private GoodRepository goodRepository;
+    private OrderRepository orderRepository;
+    private UserRepository userRepository;
+    public Order order;
+    private User user;
     private int pageLength = 5;
     private int page = 1;
 
     private Label totalPagesLabel;
     private Label pageLabel;
 
-    public OrderWindow()
+    public OrderWindow(User user, Order order)
     {
+        this.user = user;
+        this.order = order;
         this.Title = "Goods list";
 
         Rect frame = new Rect(4, 8, 40, 20);
-        allActivitiesView = new ListView(new List<Good>())
+        allGoodsView = new ListView(new List<Good>())
         {
             Width = Dim.Fill(),
             Height = Dim.Fill(),
         };
-        allActivitiesView.OpenSelectedItem += OpenActivity;
+        allGoodsView.OpenSelectedItem += OpenGood;
 
 
         Button prevPageBtn = new Button(2, 6, "prev");
@@ -47,18 +53,36 @@ public class OrderWindow : Window
         nextPageBtn.Clicked += ToNextPage;
         this.Add(prevPageBtn, pageLabel, totalPagesLabel, nextPageBtn);
 
-        FrameView frameView = new FrameView("Activities")
+        FrameView frameView = new FrameView("Goods")
         {
             X = 2,
             Y = 8,
             Width = Dim.Fill() - 4,
             Height = pageLength + 2,
         };
-        frameView.Add(allActivitiesView);
+        frameView.Add(allGoodsView);
 
         this.Add(frameView);
-    }
 
+        Button yourOrder = new Button(2, 3, "Basket");
+        yourOrder.Clicked += seeCurrentOrder;
+        this.Add(yourOrder);
+
+    }
+    private void seeCurrentOrder()
+    {
+        YourOrderDialog yourOrderDialog = new YourOrderDialog(this.order, this.orderRepository, this.goodRepository);
+        Application.Run(yourOrderDialog);
+        if (yourOrderDialog.confirm)
+        {
+            HomeWindow homeWindow = new HomeWindow(user);
+            homeWindow.SetRepository(userRepository, goodRepository, orderRepository);
+            Toplevel top = Application.Top;
+            top.RemoveAll();
+            top.Add(homeWindow);
+            Application.Run();
+        }
+    }
     private void ToPrevPage()
     {
         if (page == 1)
@@ -81,25 +105,27 @@ public class OrderWindow : Window
     {
         this.pageLabel.Text = page.ToString();
         this.totalPagesLabel.Text = goodRepository.GetTotalPages().ToString();
-        this.allActivitiesView.SetSource(goodRepository.GetPage(page));
+        this.allGoodsView.SetSource(goodRepository.GetPage(page));
     }
 
-    public void SetRepository(GoodRepository repository)
+    public void SetRepository(GoodRepository repository, OrderRepository orderRepository, UserRepository userRepository)
     {
         this.goodRepository = repository;
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
         ShowCurrentPage();
     }
 
-    private void OpenActivity(ListViewItemEventArgs args)
+    private void OpenGood(ListViewItemEventArgs args)
     {
-        Good activity = (Good)args.Value;
-        OpenGoodDialog dialog = new OpenGoodDialog();
+        Good good = (Good)args.Value;
+        OpenGoodDialog dialog = new OpenGoodDialog(this.order);
 
-        dialog.SetGood(activity);
+        dialog.SetGood(good);
+
 
         Application.Run(dialog);
-
-        //allActivitiesView.SetSource(goodRepository.GetPage(page));
+        order = dialog.order;
 
     }
 }

@@ -1,21 +1,22 @@
 using System;
 using Terminal.Gui;
 
-public class OpenGoodDialog : Dialog
+public class OpenGoodBasketDialog : Dialog
 {
     public bool deleted;
     public bool updated;
 
     protected Good good;
     public Order order;
-
+    private OrderRepository orderRepository;
     private TextField titleInput;
     private TextView descriptionInput;
     private TextField inStockValueLbl;
     private TextField priceInput;
 
-    public OpenGoodDialog(Order order)
+    public OpenGoodBasketDialog(Order order, OrderRepository orderRepository)
     {
+        this.orderRepository = orderRepository;
         this.order = order;
         this.Title = "Good";
 
@@ -67,27 +68,19 @@ public class OpenGoodDialog : Dialog
         };
         this.Add(descriptionLbl, descriptionInput);
 
-        Button addToBasket = new Button(2, 11, "Add to basket");
-        addToBasket.Clicked += AddToBasket;
-        this.Add(addToBasket);
+        Button deleteGood = new Button(2, 11, "Delete good from basket");
+        deleteGood.Clicked += DeleteGood;
+        this.Add(deleteGood);
     }
 
-    public void AddToBasket()
+    public void DeleteGood()
     {
-        if (!good.inStock)
+        int index = MessageBox.Query("Delete activity", "Are you sure?", "No", "Yes");
+        if (index == 1)
         {
-            MessageBox.ErrorQuery("Out of Stock", "This item is out of stock", "Back");
+            order.goods = orderRepository.DeleteGoodFromOrder(order, good);
+            Application.RequestStop();
         }
-        else
-        {
-            this.order.AddGoodToOrder(this.good);
-            MessageBox.Query("Add", "Good was added to order", "Back");
-        }
-    }
-
-    public Good GetGood()
-    {
-        return this.good;
     }
 
     public void SetGood(Good good)

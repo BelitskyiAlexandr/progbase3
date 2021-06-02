@@ -6,7 +6,7 @@ public class EnteringWindow : Window
 {
     public User loggedUser;
     private UserRepository userRepository;
-
+    private OrderRepository orderRepository;
     protected TextField loginInput;
     protected TextField passwordInput;
     public EnteringWindow()
@@ -68,6 +68,7 @@ public class EnteringWindow : Window
         else if (user.username == dbUser.username && Hashing.HashCode(user.password) == dbUser.password)
         {
             loggedUser = dbUser;
+            loggedUser.orders = orderRepository.GetAllUserOrdersById(dbUser.id);
             Application.RequestStop();
         }
     }
@@ -95,9 +96,10 @@ public class EnteringWindow : Window
         }
     }
 
-    public void SetRepository(UserRepository repository)
+    public void SetRepository(UserRepository repository, OrderRepository orderRepository)
     {
         this.userRepository = repository;
+        this.orderRepository = orderRepository;
     }
 
     public void ClickQuit()

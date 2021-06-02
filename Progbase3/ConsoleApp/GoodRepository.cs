@@ -100,7 +100,7 @@ public class GoodRepository
     {
         connection.Open();
         SqliteCommand command = connection.CreateCommand();
-        command.CommandText = @"SELECT * FROM products WHERE id = $id";
+        command.CommandText = @"SELECT * FROM goods WHERE id = $id";
         command.Parameters.AddWithValue("$id", id);
         SqliteDataReader reader = command.ExecuteReader();
         Good good = new Good();

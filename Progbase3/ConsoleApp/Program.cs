@@ -22,19 +22,19 @@ class Program
         while (loggedOut)
         {
             EnteringWindow enteringWin = new EnteringWindow();
-            enteringWin.SetRepository(userRepository);
+                enteringWin.SetRepository(userRepository, orderRepository);
 
 
-            top.Add(enteringWin);
-            Application.Run();
+                top.Add(enteringWin);
+                Application.Run();
 
 
-            HomeWindow homeWindow = new HomeWindow(enteringWin.loggedUser);
-            homeWindow.SetRepository(userRepository, goodRepository);
-            top.RemoveAll();
-            top.Add(homeWindow);
-            Application.Run();
-            loggedOut = homeWindow.loggedOut;
+                HomeWindow homeWindow = new HomeWindow(enteringWin.loggedUser);
+                homeWindow.SetRepository(userRepository, goodRepository, orderRepository);
+                top.RemoveAll();
+                top.Add(homeWindow);
+                Application.Run();
+                loggedOut = homeWindow.loggedOut;
 
         }
     }

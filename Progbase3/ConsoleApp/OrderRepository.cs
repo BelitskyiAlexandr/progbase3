@@ -26,7 +26,25 @@ public class OrderRepository
         connection.Close();
         return result;
     }
+    public void AddGoodsOrders(Order order)
+    {
+        for (int i = 0; i < order.goods.Length; i++)
+        {
+            connection.Open();
+            
+            SqliteCommand command = connection.CreateCommand();
+            command.CommandText =
+            @"
+                INSERT INTO goods_orders (goodId, orderId) 
+                VALUES ($goodId, $orderId);
+            ";
+            command.Parameters.AddWithValue("$goodId", order.goods[i].id);
+            command.Parameters.AddWithValue("$orderId", order.id);
 
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
+    }
     public long Insert(Order order)
     {
         connection.Open();
@@ -34,8 +52,8 @@ public class OrderRepository
         SqliteCommand command = connection.CreateCommand();
         command.CommandText =
         @"
-                INSERT INTO orders (userId, createdAt, description, amount) 
-                VALUES ($userId, $amount, $description, $amount);
+                INSERT INTO orders (userId, createdAt, amount) 
+                VALUES ($userId, $createdAt, $amount);
             
                 SELECT last_insert_rowid();
             ";
@@ -63,15 +81,29 @@ public class OrderRepository
         return !(nChanged == 0);
     }
 
+    public Good[] DeleteGoodFromOrder(Order order, Good good)
+    {
+        List<Good> goods = new List<Good>(order.goods);
+        for(int i = 0; i < order.goods.Length; i++)
+        {
+            if(goods[i] == good)
+            {
+                goods.RemoveAt(i);
+            }
+        }
+        order.goods = goods.ToArray();
+        return order.goods;
+    }
+
     public Order[] GetAllUserOrdersById(long userId)
     {
         List<Order> ordersList = new List<Order>();
         connection.Open();
-        
+
         SqliteCommand command = connection.CreateCommand();
         command.CommandText = @"SELECT * FROM orders WHERE userId = $userId";
         command.Parameters.AddWithValue("$userId", userId);
-        
+
         SqliteDataReader reader = command.ExecuteReader();
         while (reader.Read())
         {
@@ -107,7 +139,7 @@ public class OrderRepository
 
         List<Order> ordersList = new List<Order>();
 
-        foreach(var orderId in ordersIdList)
+        foreach (var orderId in ordersIdList)
         {
             Order order = GetById(orderId);
             ordersList.Add(order);
@@ -122,10 +154,10 @@ public class OrderRepository
     {
         connection.Open();
         SqliteCommand command = connection.CreateCommand();
-       
+
         command.CommandText = @"SELECT * FROM orders WHERE id = $id";
         command.Parameters.AddWithValue("$id", id);
-       
+
         SqliteDataReader reader = command.ExecuteReader();
         Order order = new Order();
         if (reader.Read())
