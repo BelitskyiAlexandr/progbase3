@@ -83,12 +83,12 @@ public class OrderRepository
 
     public Good[] DeleteGoodFromOrder(Order order, Good good)
     {
-        List<Good> goods = new List<Good>(order.goods);
+        List<Good> goods = new List<Good>();
         for(int i = 0; i < order.goods.Length; i++)
         {
-            if(goods[i] == good)
+            if(!(order.goods[i] == good))
             {
-                goods.RemoveAt(i);
+                goods.Add(order.goods[i]);
             }
         }
         order.goods = goods.ToArray();

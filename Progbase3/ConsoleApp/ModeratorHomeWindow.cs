@@ -129,6 +129,10 @@ public class ModeratorHomeWindow : HomeWindow
         exportBtn.Clicked += ExportProcess;
         dialog.Add(exportBtn);
 
+        Button back = new Button(2, 10,"Back");
+        back.Clicked += ClickQuit;
+        dialog.Add(back);
+
 
         Application.Run(dialog);
 
@@ -190,6 +194,10 @@ public class ModeratorHomeWindow : HomeWindow
         Button importBtn = new Button(2, 7, "Import");
         importBtn.Clicked += ImportProcess;
         dialog.Add(importBtn);
+
+        Button back = new Button(2, 10,"Back");
+        back.Clicked += ClickQuit;
+        dialog.Add(back);
 
         Application.Run(dialog);
     }
