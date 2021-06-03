@@ -7,18 +7,17 @@ public class HomeWindow : Window
     private ListView allOrdersView;
     public User user;
     public bool loggedOut;
-    private OrderRepository orderRepository;
-    private UserRepository userRepository;
-    private GoodRepository goodRepository;
+    protected OrderRepository orderRepository;
+    protected UserRepository userRepository;
+    protected GoodRepository goodRepository;
     protected TextField loggedAsInput;
-    public HomeWindow(User user)
+    public HomeWindow()
     {
-        this.user = user;
         this.Title = "Home Window";
 
 
-        Label logedAsLbl = new Label(40, 1, "Logged as: ");
-        loggedAsInput = new TextField(user.username)
+        Label logedAsLbl = new Label(40, 2, "Logged as: ");
+        loggedAsInput = new TextField()
         {
             X = Pos.Right(logedAsLbl),
             Y = Pos.Top(logedAsLbl),
@@ -27,11 +26,11 @@ public class HomeWindow : Window
         };
         this.Add(logedAsLbl, loggedAsInput);
 
-        Button logOut = new Button(60, 3, "Log out");
+        Button logOut = new Button(60, 4, "Log out");
         logOut.Clicked += OnLogOut;
         this.Add(logOut);
 
-        Button exit = new Button(60, 5, "Exit");
+        Button exit = new Button(60, 6, "Exit");
         exit.Clicked += ClickQuit;
         this.Add(exit);
 
@@ -98,12 +97,13 @@ public class HomeWindow : Window
         this.loggedOut = true;
         Application.RequestStop();
     }
-    public void SetRepository(UserRepository repository, GoodRepository goodRepository, OrderRepository orderRepository)
+    public void SetRepository(User user, UserRepository repository, GoodRepository goodRepository, OrderRepository orderRepository)
     {
         this.userRepository = repository;
         this.goodRepository = goodRepository;
         this.orderRepository = orderRepository;
-
+        this.user = user;
+        loggedAsInput.Text = user.username; 
         this.allOrdersView.SetSource(GetPage());
     }
 

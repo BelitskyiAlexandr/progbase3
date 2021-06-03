@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Data.Sqlite;
 
     public class UserRepository
@@ -88,7 +89,7 @@ using Microsoft.Data.Sqlite;
             return !(nChanged == 0);
         }
 
-        public void AllRecords()                        //Невідомо чи буде використовуватись
+        public List<User> AllRecords()                       
         {
             connection.Open();
 
@@ -96,23 +97,22 @@ using Microsoft.Data.Sqlite;
             command.CommandText = @"SELECT * FROM users";
 
             SqliteDataReader reader = command.ExecuteReader();
-
+            List<User> users = new List<User>();
             while (reader.Read())
             {
                 User user = new User();
                 user.id = long.Parse(reader.GetString(0));
                 user.username = reader.GetString(1);
-                user.fullname = reader.GetString(2);
-                user.createdAt = DateTime.Parse(reader.GetString(3));
+                user.fullname = reader.GetString(3);
+                user.createdAt = DateTime.Parse(reader.GetString(4));
 
-
-                Console.WriteLine(user);
+                users.Add(user);
             }
 
             reader.Close();
 
             connection.Close();
-
+            return users;
         }
 
 

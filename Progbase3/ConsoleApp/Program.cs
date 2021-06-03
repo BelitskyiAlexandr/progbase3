@@ -21,21 +21,33 @@ class Program
         bool loggedOut = true;
         while (loggedOut)
         {
-            EnteringWindow enteringWin = new EnteringWindow();
+               EnteringWindow enteringWin = new EnteringWindow();
                 enteringWin.SetRepository(userRepository, orderRepository);
 
 
                 top.Add(enteringWin);
                 Application.Run();
 
+                if (enteringWin.loggedUser.role == "user")
+                {
+                    HomeWindow homeWindow = new HomeWindow();
+                    homeWindow.SetRepository(enteringWin.loggedUser, userRepository, goodRepository, orderRepository);
+                    top.RemoveAll();
+                    top.Add(homeWindow);
+                    Application.Run();
+                    loggedOut = homeWindow.loggedOut;
 
-                HomeWindow homeWindow = new HomeWindow(enteringWin.loggedUser);
-                homeWindow.SetRepository(userRepository, goodRepository, orderRepository);
-                top.RemoveAll();
-                top.Add(homeWindow);
-                Application.Run();
-                loggedOut = homeWindow.loggedOut;
-
+                }
+                else if (enteringWin.loggedUser.role == "moderator")
+                {
+                    ModeratorHomeWindow homeWindow = new ModeratorHomeWindow();
+                    homeWindow.SetRepository(enteringWin.loggedUser, userRepository, goodRepository, orderRepository);
+                    top.RemoveAll();
+                    top.Add(homeWindow);
+                    Application.Run();
+                    loggedOut = homeWindow.loggedOut;
+    
+                }
         }
     }
 }

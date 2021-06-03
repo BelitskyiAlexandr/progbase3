@@ -75,8 +75,8 @@ public class OrderWindow : Window
         Application.Run(yourOrderDialog);
         if (yourOrderDialog.confirm)
         {
-            HomeWindow homeWindow = new HomeWindow(user);
-            homeWindow.SetRepository(userRepository, goodRepository, orderRepository);
+            HomeWindow homeWindow = new HomeWindow();
+            homeWindow.SetRepository(user, userRepository, goodRepository, orderRepository);
             Toplevel top = Application.Top;
             top.RemoveAll();
             top.Add(homeWindow);

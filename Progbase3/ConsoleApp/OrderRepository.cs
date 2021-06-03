@@ -171,4 +171,30 @@ public class OrderRepository
 
         return order;
     }
+
+    public List<Order> GetAll()
+    {
+        connection.Open();
+
+            SqliteCommand command = connection.CreateCommand();
+            command.CommandText = @"SELECT * FROM orders";
+
+            SqliteDataReader reader = command.ExecuteReader();
+            List<Order> orders = new List<Order>();
+            while (reader.Read())
+            {
+                Order order = new Order();
+                order.id = long.Parse(reader.GetString(0));
+                order.userId = long.Parse(reader.GetString(1));
+                order.createdAt = DateTime.Parse(reader.GetString(2));
+                order.amount = double.Parse(reader.GetString(3), CultureInfo.InvariantCulture);
+
+                orders.Add(order);
+            }
+
+            reader.Close();
+
+            connection.Close();
+            return orders;
+    }
 }

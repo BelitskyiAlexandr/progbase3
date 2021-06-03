@@ -36,6 +36,6 @@ public class User
 
     public override string ToString()
     {
-        return $"User: [{id}] username: {username} fullname: {fullname}\r\n({createdAt.ToString()})";
+        return $"User: [{id, 2}] username: {username,-10} fullname: {fullname,-10} ({createdAt.ToShortDateString()})";
     }
 }
