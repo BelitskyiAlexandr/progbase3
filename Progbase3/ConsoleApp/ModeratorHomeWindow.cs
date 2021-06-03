@@ -55,11 +55,8 @@ public class ModeratorHomeWindow : HomeWindow
         usersDialog.SetRepository(userRepository);
         Application.Run(usersDialog);
     }
-    public void SetRepositories(UserRepository userRepository, GoodRepository goodRepository, OrderRepository orderRepository, XmlProcess xmlProcess)
+    public void SetXml(XmlProcess xmlProcess)
     {
-        this.userRepository = userRepository;
-        this.goodRepository = goodRepository;
-        this.orderRepository = orderRepository;
         this.xmlProcess = xmlProcess;
     }
     public void ClickAbout()
@@ -100,12 +97,115 @@ public class ModeratorHomeWindow : HomeWindow
         Application.RequestStop();
     }
 
+    static Dialog dialog;
+    static Label fileLabel;
+    static TextField substringInput;
     public void ClickExport()
     {
+        dialog = new Dialog("Export");
+        Button deleteBtn = new Button(3, 2, "Open file");
+        deleteBtn.Clicked += SelectFile;
+
+        fileLabel = new Label("default")
+        {
+            X = Pos.Right(deleteBtn) + 2,
+            Y = Pos.Top(deleteBtn),
+            Width = Dim.Fill(),
+        };
+
+        dialog.Add(deleteBtn, fileLabel);
+
+
+        Label substringLbl = new Label(2, 4, "Enter substring: ");
+        substringInput = new TextField()
+        {
+            X = Pos.Right(substringLbl),
+            Y = Pos.Top(substringLbl),
+            Width = 15,
+        };
+        dialog.Add(substringLbl, substringInput);
+
+        Button exportBtn = new Button(2, 7, "Export");
+        exportBtn.Clicked += ExportProcess;
+        dialog.Add(exportBtn);
+
+
+        Application.Run(dialog);
+
+    }
+    public void ExportProcess()
+    {
+        string filePath = fileLabel.Text.ToString();
+        string substring = substringInput.Text.ToString();
+        if (filePath == "default" || !filePath.EndsWith(".xml"))
+        {
+            MessageBox.ErrorQuery("Filepath", "Choose Xml file", "Back");
+        }
+        else if (substring == "")
+        {
+            MessageBox.ErrorQuery("Substring", "Enter substring", "Back");
+        }
+        else
+        {
+            xmlProcess.XmlExport(goodRepository.GetExportGoods(substring), filePath);
+            MessageBox.Query("Export", "Exported successfully", "Back");
+            Application.RequestStop();
+        }
+    }
+    static void SelectFile()
+    {
+        OpenDialog dialog = new OpenDialog("Open directory", "Open?");
+        dialog.CanChooseDirectories = false;
+        dialog.CanChooseFiles = true;
+        Application.Run(dialog);
+
+        if (!dialog.Canceled)
+        {
+            NStack.ustring filePath = dialog.FilePath;
+            fileLabel.Text = filePath;
+        }
+        else
+        {
+            fileLabel.Text = "not selected.";
+        }
+
 
     }
     public void ClickImport()
     {
+        dialog = new Dialog("Import");
+        Button deleteBtn = new Button(3, 2, "Open file");
+        deleteBtn.Clicked += SelectFile;
 
+        fileLabel = new Label("default")
+        {
+            X = Pos.Right(deleteBtn) + 2,
+            Y = Pos.Top(deleteBtn),
+            Width = Dim.Fill(),
+        };
+
+        dialog.Add(deleteBtn, fileLabel);
+
+
+        Button importBtn = new Button(2, 7, "Import");
+        importBtn.Clicked += ImportProcess;
+        dialog.Add(importBtn);
+
+        Application.Run(dialog);
+    }
+
+    public void ImportProcess()
+    {
+        string filePath = fileLabel.Text.ToString();
+        if (filePath == "default" || !filePath.EndsWith(".xml"))
+        {
+            MessageBox.ErrorQuery("Filepath", "Choose Xml file", "Back");
+        }
+        else
+        {
+            xmlProcess.XmlImport(filePath, goodRepository);
+            MessageBox.Query("Import", "Imported successfully", "Back");
+            Application.RequestStop();
+        }
     }
 }
