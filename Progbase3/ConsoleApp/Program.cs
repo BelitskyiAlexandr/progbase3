@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.Data.Sqlite;
 using Terminal.Gui;
 
@@ -10,6 +11,11 @@ namespace interfaceGUI
         {
 
             string databaseFileName = @"../../data/shop";
+            if (!File.Exists(databaseFileName))
+            {
+                Console.Error.WriteLine("Not found database");
+                Environment.Exit(0);
+            }
             SqliteConnection connection = new SqliteConnection($"Data Source={databaseFileName}");
             UserRepository userRepository = new UserRepository(connection);
             GoodRepository goodRepository = new GoodRepository(connection);
